@@ -34,26 +34,32 @@ const TodoApp = () => {
   const addTodo = async (e) => {
     e.preventDefault();
     if (input.trim() === "") return;
+    const nextIndex =
+      todos.sort((a, b) => b.index - a.index)[0]?.index + 1 || 0;
+
     const updatedTodos = [
       ...todos,
-      { oppgave: input, fullført: false, index: todos.length },
+      { oppgave: input, fullført: false, index: nextIndex },
     ];
     await updateTodos(updatedTodos);
     setStatusMessage(`Oppgaven: ${input} ble lagt til`);
     setInput("");
   };
 
-  const deleteTodo = async (index) => {
-    const updatedTodos = todos.filter((_, i) => i !== index);
+  const deleteTodo = async (index, oppgave) => {
+    const updatedTodos = todos.filter((item) => index !== item.index);
     await updateTodos(updatedTodos);
-    setStatusMessage(
-      `Oppgaven: ${todos[index]?.oppgave || "ukjent"} ble lagt slettet`
-    );
+    setStatusMessage(`Oppgaven: ${oppgave} ble lagt slettet`);
   };
 
   const toggleComplete = (index) => {
-    const updatedTodos = [...todos];
-    updatedTodos[index].fullført = !updatedTodos[index].fullført;
+    const updatedTodos = todos.reduce((acc, todo) => {
+      if (todo.index === index) {
+        todo.fullført = !todo.fullført;
+      }
+      acc.push(todo);
+      return acc;
+    }, []);
     setTodos(updatedTodos);
   };
 
@@ -95,7 +101,7 @@ const TodoApp = () => {
                 <span className="text">{todo.oppgave}</span>
               </label>
               <button
-                onClick={() => deleteTodo(todo.index)}
+                onClick={() => deleteTodo(todo.index, todo.oppgave)}
                 aria-label={`slett ${todo.oppgave}`}
               >
                 &times;

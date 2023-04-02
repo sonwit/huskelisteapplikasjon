@@ -1,1 +1,10 @@
-{"oppgaver":[{"index":0,"oppgave":"Melk","fullført":false},{"index":1,"oppgave":"Brød","fullført":false},{"index":2,"oppgave":"Toro Lasagne","fullført":true},{"index":3,"oppgave":"Kaffebønner","fullført":true},{"index":4,"oppgave":"Hent pakke på Posten","fullført":false},{"index":5,"oppgave":"Leverpostei","fullført":false},{"oppgave":"Lufte hund","fullført":true,"index":6}]}
+{
+  "oppgaver": [
+    { "index": 5, "oppgave": "Leverpostei", "fullført": false },
+    { "index": 4, "oppgave": "Hent pakke på Posten", "fullført": false },
+    { "index": 3, "oppgave": "Kaffebønner", "fullført": true },
+    { "index": 2, "oppgave": "Toro Lasagne", "fullført": true },
+    { "index": 1, "oppgave": "Brød", "fullført": false },
+    { "index": 0, "oppgave": "Melk", "fullført": false }
+  ]
+}
