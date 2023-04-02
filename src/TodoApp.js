@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
+import axios from "axios";
 
 const TodoApp = () => {
   const [todos, setTodos] = useState([]);
@@ -6,30 +7,59 @@ const TodoApp = () => {
   const [showCompleted, setShowCompleted] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
 
-  const addTodo = (e) => {
+  useEffect(() => {
+    const fetchTodos = async () => {
+      try {
+        const response = await axios.get("http://localhost:3001/todos");
+        setTodos(response.data.oppgaver);
+      } catch (error) {
+        console.error("Error fetching todos:", error);
+      }
+    };
+
+    fetchTodos();
+  }, []);
+
+  const updateTodos = async (updatedTodos) => {
+    try {
+      await axios.put("http://localhost:3001/todos", {
+        oppgaver: updatedTodos,
+      });
+      setTodos(updatedTodos);
+    } catch (error) {
+      console.error("Error updating todos:", error);
+    }
+  };
+
+  const addTodo = async (e) => {
     e.preventDefault();
     if (input.trim() === "") return;
-    setTodos([...todos, { text: input, completed: false }]);
+    const updatedTodos = [
+      ...todos,
+      { oppgave: input, fullført: false, index: todos.length },
+    ];
+    await updateTodos(updatedTodos);
     setStatusMessage(`Oppgaven: ${input} ble lagt til`);
     setInput("");
   };
 
-  const deleteTodo = (index) => {
+  const deleteTodo = async (index) => {
+    const updatedTodos = todos.filter((_, i) => i !== index);
+    await updateTodos(updatedTodos);
     setStatusMessage(
-      `Oppgaven: ${todos[index]?.text || "ukjent"} ble lagt slettet`
+      `Oppgaven: ${todos[index]?.oppgave || "ukjent"} ble lagt slettet`
     );
-    setTodos(todos.filter((_, i) => i !== index));
   };
 
   const toggleComplete = (index) => {
     const updatedTodos = [...todos];
-    updatedTodos[index].completed = !updatedTodos[index].completed;
+    updatedTodos[index].fullført = !updatedTodos[index].fullført;
     setTodos(updatedTodos);
   };
 
   const filterdTodos = useMemo(() => {
     if (showCompleted) return todos;
-    return todos.filter((todo) => !todo.completed);
+    return todos ? todos.filter((todo) => !todo.fullført) : [];
   }, [todos, showCompleted]);
 
   return (
@@ -40,26 +70,33 @@ const TodoApp = () => {
         {/* <!-- add content to hear it spoken --> */}
         {statusMessage}
       </div>
-
+      <button
+        className="toggle-btn"
+        aria-pressed={showCompleted}
+        onClick={() => setShowCompleted(!showCompleted)}
+      >
+        <span className="tick"></span>
+        <span className="text"> Vis fullførte oppgaver</span>
+      </button>
       <ul>
-        {filterdTodos.map((todo, index) => {
-          const itemId = `todo-${index}`;
+        {filterdTodos.map((todo) => {
+          const itemId = `todo-${todo.index}`;
           return (
-            <li key={index}>
+            <li key={todo.index}>
               <input
                 className="vh"
                 id={itemId}
                 type="checkbox"
-                checked={todo.completed}
-                onChange={() => toggleComplete(index)}
+                checked={todo.fullført}
+                onChange={() => toggleComplete(todo.index)}
               />
               <label htmlFor={itemId} className="text">
-                <span class="tick"></span>
-                <span class="text">{todo.text}</span>
+                <span className="tick"></span>
+                <span className="text">{todo.oppgave}</span>
               </label>
               <button
-                onClick={() => deleteTodo(index)}
-                aria-label={`slett ${todo.text}`}
+                onClick={() => deleteTodo(todo.index)}
+                aria-label={`slett ${todo.oppgave}`}
               >
                 &times;
               </button>
@@ -75,15 +112,7 @@ const TodoApp = () => {
           </p>
         </div>
       )}
-      <button
-        className="toggle-btn"
-        aria-pressed={showCompleted}
-        onClick={() => setShowCompleted(!showCompleted)}
-      >
-         <span class="tick"></span>
-        <span class="text"> Vis fullførte oppgaver</span>
 
-      </button>
       <form onSubmit={addTodo}>
         <label className="vh" htmlFor="addTodoName">
           Legg til ny oppgave
