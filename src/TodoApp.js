@@ -4,7 +4,7 @@ import axios from "axios";
 const TodoApp = () => {
   const [todos, setTodos] = useState([]);
   const [input, setInput] = useState("");
-  const [showCompleted, setShowCompleted] = useState(false);
+  const [showCompleted, setShowCompleted] = useState(true);
   const [statusMessage, setStatusMessage] = useState("");
 
   useEffect(() => {
@@ -49,7 +49,7 @@ const TodoApp = () => {
   const deleteTodo = async (index, oppgave) => {
     const updatedTodos = todos.filter((item) => index !== item.index);
     await updateTodos(updatedTodos);
-    setStatusMessage(`Oppgaven: ${oppgave} ble lagt slettet`);
+    setStatusMessage(`Oppgaven: ${oppgave} ble slettet`);
   };
 
   const toggleComplete = (index) => {
@@ -73,7 +73,6 @@ const TodoApp = () => {
       <h1>Huskeliste</h1>
 
       <div role="status" aria-live="polite" className="vh">
-        {/* <!-- add content to hear it spoken --> */}
         {statusMessage}
       </div>
       <button

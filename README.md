@@ -2,6 +2,8 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+
+
 ## Kom i gang
 ```sh
 npm install
@@ -24,3 +26,5 @@ Hent ut huskelistedata fra vedlagte json-fil og bruk disse dataene i huskelisten
 ### Oppgave 3: Tilgjengelighet
 Sørg for at huskelisteapplikasjonen kan brukes av blinde mennesker
 
+## Andre lenker 
+- [Inclusive Components](https://inclusive-components.design/a-todo-list/)
