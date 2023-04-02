@@ -15,11 +15,16 @@
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
+  "devDependencies": {
+    "concurrently": "^8.0.1"
+  },
   "scripts": {
-    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "start": "concurrently \"npm run start:server\" \"npm run start:client\"",
+    "start:server": "node ./server.js",
+    "start:client": "react-scripts start"
   },
   "eslintConfig": {
     "extends": [
