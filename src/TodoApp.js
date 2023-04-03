@@ -52,7 +52,7 @@ const TodoApp = () => {
     setStatusMessage(`Oppgaven: ${oppgave} ble slettet`);
   };
 
-  const toggleComplete = (index) => {
+  const toggleComplete = async (index, oppgave) => {
     const updatedTodos = todos.reduce((acc, todo) => {
       if (todo.index === index) {
         todo.fullført = !todo.fullført;
@@ -60,7 +60,8 @@ const TodoApp = () => {
       acc.push(todo);
       return acc;
     }, []);
-    setTodos(updatedTodos);
+    await updateTodos(updatedTodos);
+    setStatusMessage(`Oppgaven: ${oppgave} ble oppdatert`);
   };
 
   const filterdTodos = useMemo(() => {
