@@ -5,6 +5,6 @@
     { "index": 3, "oppgave": "Kaffebønner", "fullført": true },
     { "index": 2, "oppgave": "Toro Lasagne", "fullført": true },
     { "index": 1, "oppgave": "Brød", "fullført": false },
-    { "index": 0, "oppgave": "Melk", "fullført": false }
+    { "index": 0, "oppgave": "Melk", "fullført": true }
   ]
 }
