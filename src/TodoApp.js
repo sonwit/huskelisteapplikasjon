@@ -7,66 +7,76 @@ const TodoApp = () => {
   const [showCompleted, setShowCompleted] = useState(true);
   const [statusMessage, setStatusMessage] = useState("");
 
-  useEffect(() => {
-    const fetchTodos = async () => {
+  const fetchTodos = async () => {
+    try {
+      const req = await fetch("http://localhost:3000/api/todos");
       try {
-        const response = await axios.get("http://localhost:3001/todos");
-        setTodos(response.data.oppgaver);
+        const res = await req.json();
+        setTodos(res);
+        console.log("🚀 ~ file: TodoApp.js:20 ~ fetchTodos ~ res.data:", res);
       } catch (error) {
         console.error("Error fetching todos:", error);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching todos:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchTodos();
   }, []);
+ 
 
-  const updateTodos = async (updatedTodos) => {
+  const addTodo = async (e) => {
+    e.preventDefault();
+    if (input.trim() === "") return;
     try {
-      await axios.put("http://localhost:3001/todos", {
-        oppgaver: updatedTodos,
+      await fetch("http://localhost:3000/api/todo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title: input }),
       });
-      setTodos(updatedTodos);
+      setInput("");
+      fetchTodos();
+      setStatusMessage(`Oppgaven: ${input} ble lagt til`);
     } catch (error) {
       console.error("Error updating todos:", error);
     }
   };
 
-  const addTodo = async (e) => {
-    e.preventDefault();
-    if (input.trim() === "") return;
-    const nextIndex =
-      todos.sort((a, b) => b.index - a.index)[0]?.index + 1 || 0;
-
-    const updatedTodos = [
-      ...todos,
-      { oppgave: input, fullført: false, index: nextIndex },
-    ];
-    await updateTodos(updatedTodos);
-    setStatusMessage(`Oppgaven: ${input} ble lagt til`);
-    setInput("");
+  const deleteTodo = async (oppgaveId) => {
+    await fetch("http://localhost:3000/api/todo", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: oppgaveId }),
+    });
+    fetchTodos();
+    setStatusMessage(`Oppgaven: ${oppgaveId} ble slettet`);
   };
 
-  const deleteTodo = async (index, oppgave) => {
-    const updatedTodos = todos.filter((item) => index !== item.index);
-    await updateTodos(updatedTodos);
-    setStatusMessage(`Oppgaven: ${oppgave} ble slettet`);
-  };
-
-  const toggleComplete = async (index, oppgave) => {
-    const updatedTodos = todos.reduce((acc, todo) => {
-      if (todo.index === index) {
-        todo.fullført = !todo.fullført;
-      }
-      acc.push(todo);
-      return acc;
-    }, []);
-    await updateTodos(updatedTodos);
-    setStatusMessage(`Oppgaven: ${oppgave} ble oppdatert`);
+  const toggleComplete = async (oppgave) => {
+    try {
+      await fetch("http://localhost:3000/api/todo", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...oppgave, completed: !oppgave.completed }),
+      });
+      fetchTodos();
+      setStatusMessage(`Oppgaven: ${oppgave.id} ble oppdatert`);
+    } catch (error) {
+      console.error("Error updating todos:", error);
+    }
   };
 
   const filterdTodos = useMemo(() => {
     if (showCompleted) return todos;
-    return todos ? todos.filter((todo) => !todo.fullført) : [];
+    return todos ? todos.filter((todo) => !todo.completed) : [];
   }, [todos, showCompleted]);
 
   return (
@@ -86,23 +96,23 @@ const TodoApp = () => {
       </button>
       <ul>
         {filterdTodos.map((todo) => {
-          const itemId = `todo-${todo.index}`;
+          const itemId = `todo-${todo.id}`;
           return (
-            <li key={todo.index}>
+            <li key={todo.id}>
               <input
                 className="vh"
                 id={itemId}
                 type="checkbox"
-                checked={todo.fullført}
-                onChange={() => toggleComplete(todo.index)}
+                checked={todo.completed}
+                onChange={() => toggleComplete(todo)}
               />
               <label htmlFor={itemId} className="text">
                 <span className="tick"></span>
-                <span className="text">{todo.oppgave}</span>
+                <span className="text">{todo.title}</span>
               </label>
               <button
-                onClick={() => deleteTodo(todo.index, todo.oppgave)}
-                aria-label={`slett ${todo.oppgave}`}
+                onClick={() => deleteTodo(todo.id, todo.title)}
+                aria-label={`slett ${todo.title}`}
               >
                 &times;
               </button>
