@@ -26,7 +26,7 @@ fn app() -> Html {
 
     html! {
         <div class="App">
-            <h1>{"Huskeliste"}</h1>
+            <h1>{"Asd"}</h1>
             <TodoList todos={(*todos).clone()} />
         </div>
     }

@@ -1,7 +1,6 @@
 use yew::prelude::*;
 
-use crate::{types::todo::Todo, components::todo_item::TodoItem};
-
+use crate::{components::todo_item::TodoItem, types::todo::Todo};
 
 #[derive(Properties, PartialEq)]
 pub struct TodoListProps {
@@ -10,12 +9,14 @@ pub struct TodoListProps {
 
 #[function_component(TodoList)]
 pub fn todo_list(TodoListProps { todos }: &TodoListProps) -> Html {
-    todos
-        .iter()
-        .map(|todo| {
-            html! {
-                <TodoItem todo={todo.clone()} />
-            }
-        })
-        .collect()
+    html! {
+    <ul class="item-list">
+       {todos
+           .iter()
+           .map(|todo| html!{
+                <TodoItem key={todo.id} todo={todo.clone()} />
+            })
+           .collect::<Html>()
+        }
+    </ul>}
 }
