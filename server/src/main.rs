@@ -12,9 +12,14 @@ use features::todo::{api_delete_todo, api_get_todo, api_get_todos, api_post_todo
 
 #[tokio::main]
 async fn main() {
+    let allowed_origins = vec![
+        HeaderValue::from_static("http://localhost:3006"),
+        HeaderValue::from_static("http://127.0.0.1:3006"),
+    ];
+
     let cors_layer = CorsLayer::new()
         .allow_methods(vec![Method::GET, Method::POST, Method::PUT, Method::DELETE])
-        .allow_origin(HeaderValue::from_static("http://localhost:3006"))
+        .allow_origin(allowed_origins)
         .allow_headers(vec![
             http::header::AUTHORIZATION,
             http::header::ACCEPT,

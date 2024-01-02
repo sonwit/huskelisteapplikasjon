@@ -1,5 +1,4 @@
 import React, { useMemo, useState, useEffect } from "react";
-import axios from "axios";
 
 const TodoApp = () => {
   const [todos, setTodos] = useState([]);
